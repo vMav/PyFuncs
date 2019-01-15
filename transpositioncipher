@@ -1,0 +1,43 @@
+def transposition(key, secret, encode=False):
+    alpha = list('abcdefghijklmnopqrstuvwxyz'.upper())
+    proto = [[_] for _ in key]
+    #arrange set of buckets
+    buckets = []  
+    for i in proto:
+        if i not in buckets:
+            buckets.append(i)
+    #remove duplicates
+   
+    remainder = [a for a in alpha if a not in set(key)]
+
+    #populate buckets
+    x = 0
+    while len(remainder) > 0:
+        
+        if x < len(buckets):
+            buckets[x].append(remainder.pop(0))
+            x += 1
+        else:
+            x = 0
+            buckets[x].append(remainder.pop(0))
+            x += 1
+            
+    #re-order buckets        
+    order = [[i[0] for i in buckets].index(ix) for ix in sorted([i[0] for i in buckets])]
+    buckets = [buckets[i] for i in order]
+    
+    #put keys together
+    mapped = ''.join([''.join(i) for i in buckets])
+    
+    if encode:
+        encrpyt = {alpha[i] : mapped[i] for i in range(26)}
+        return ''.join([encrpyt[s] if s in alpha else s for s in secret])
+    
+    else:
+        cipher = {mapped[i] : alpha[i] for i in range(26)}
+        return ''.join([cipher[s] if s in alpha else s for s in secret])
+
+def decrypt(key, secret):
+    return transposition(key, secret, False)
+def encrypt(key, secret):
+    return transposition(key, secret, True)
